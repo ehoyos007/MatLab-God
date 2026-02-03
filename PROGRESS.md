@@ -247,4 +247,26 @@ Chat history now persists across sessions. Users can clear with the header butto
 Chat now renders full markdown including code, lists, emphasis, and links.
 
 ### Remaining Work
-- [ ] Rate limiting on chat API (T32)
+- [x] Rate limiting on chat API (T32)
+
+## Session 7 (continued) — 2026-02-03
+
+**Focus:** Rate limiting on chat API (T32)
+
+### Completed
+- Implemented sliding window rate limiter in `/api/chat`:
+  - 10 requests per minute per IP
+  - Returns 429 with Retry-After header when exceeded
+  - In-memory store with automatic cleanup
+- Updated ChatContext to handle 429 errors gracefully with user-friendly message
+- Rate limit headers included in responses (X-RateLimit-*)
+
+### Where We Left Off
+Rate limiting is active. Phase 4 complete!
+
+### Phase 4 Complete
+All tasks finished:
+- [x] T21: Sound effects toggle
+- [x] T30: Chat history persistence
+- [x] T31: Markdown rendering in chat
+- [x] T32: Rate limiting on chat API

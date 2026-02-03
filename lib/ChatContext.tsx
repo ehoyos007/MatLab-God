@@ -90,7 +90,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         }),
       });
 
-      if (!res.ok) throw new Error('Chat request failed');
+      if (!res.ok) {
+        if (res.status === 429) {
+          const retryAfter = res.headers.get('Retry-After') || '60';
+          throw new Error(`Rate limit exceeded. Please wait ${retryAfter} seconds.`);
+        }
+        throw new Error('Chat request failed');
+      }
 
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
@@ -115,11 +121,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(prev));
         return prev;
       });
-    } catch {
+    } catch (err) {
       isStreamingRef.current = false;
+      const errorMessage = err instanceof Error ? err.message : 'Something went wrong.';
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: 'Sorry, something went wrong. Check that your API key is set.' },
+        { role: 'assistant', content: `Sorry, ${errorMessage}` },
       ]);
     } finally {
       setIsLoading(false);
