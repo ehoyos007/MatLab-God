@@ -22,14 +22,22 @@
 ## Phase 2 — Exam Prep & Polish
 
 - [ ] **T17:** Add fill-in-the-blank challenge type
-- [ ] **T18:** Build exam prep mode (timed, no-execution, cumulative scope selection)
+- [x] **T18:** Build exam prep mode (timed, no-execution, cumulative scope selection)
 - [ ] **T21:** Add sound effects (optional toggle)
 
 ## Phase 3 — Full Content & Polish
 
 - [x] **T22:** Create challenge data for Modules 5-9 (25 challenges)
 - [x] **T23:** Create challenge data for Modules 10-11 (10 challenges)
-- [ ] **T24:** Expand exam prep for Midterm 2 and Final
-- [ ] **T26:** Progress dashboard screen (overall stats, per-module breakdown)
-- [ ] **T27:** Edge cases, polish, bug fixes
-- [ ] **T28:** Deploy to Vercel
+- [x] **T24:** Expand exam prep for Midterm 2 and Final
+- [x] **T26:** Progress dashboard screen (overall stats, per-module breakdown)
+- [x] **T27:** Mobile responsiveness optimization
+- [x] **T28:** Deploy to Vercel
+- [x] **T29:** AI tutor chatbot (Claude-powered, streaming, challenge-aware)
+
+## Phase 4 — Future Enhancements
+
+- [ ] **T30:** Persist chat history in localStorage
+- [ ] **T31:** Markdown rendering in chat (react-markdown)
+- [ ] **T32:** Rate limiting on chat API
+- [x] **T33:** Progress dashboard screen (overall stats, per-module breakdown)

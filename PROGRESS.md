@@ -99,4 +99,65 @@ All 11 modules have content. The app is fully playable at `npm run dev` → loca
 - [ ] Fill-in-the-blank challenge type
 - [ ] Progress dashboard screen
 - [ ] Sound effects toggle
-- [ ] Deploy to Vercel
+
+## Session 4 — 2026-02-02
+
+**Focus:** AI chatbot integration, mobile optimization, deployment
+
+### Completed
+- Integrated Claude-powered AI tutor chatbot:
+  - `app/api/chat/route.ts` — streaming proxy to Anthropic API
+  - `lib/ChatContext.tsx` — React context for chat state + challenge awareness
+  - `components/ChatSidebar.tsx` — slide-out sidebar with message bubbles, code blocks, "Ask about this challenge" quick action
+  - Wired into `layout.tsx` and `ChallengeView.tsx` (auto-sets challenge context)
+  - System prompt uses Socratic questioning when challenge context is present
+- Installed `@anthropic-ai/sdk`
+- Mobile responsiveness pass on all pages and components:
+  - ChatSidebar: full-width on mobile, 380px on sm+
+  - ChallengeView: responsive text, shorter editors, flex-wrap buttons, 44px touch targets
+  - Modules page: responsive padding/gaps, touch-friendly cards
+  - Cheatsheet page: wrapping header, overflow-safe code blocks
+  - globals.css: overflow-x hidden, smaller base code font on mobile
+- Deployed to Vercel production: https://matlab-god.vercel.app
+- Created GitHub repo: https://github.com/ehoyos007/MatLab-God
+
+### Where We Left Off
+App is fully deployed and live with AI chatbot working. All 11 modules playable.
+
+### Remaining Work
+- [x] Exam prep mode
+- [ ] Fill-in-the-blank challenge type
+- [x] Progress dashboard
+- [ ] Chat history persistence (localStorage)
+- [ ] Rate limiting on chat API
+
+## Session 5 — 2026-02-02
+
+**Focus:** Exam Prep mode, Progress Dashboard, Redeploy
+
+### Completed
+- Built `/exam-prep` page with full timed exam flow:
+  - Setup screen: scope selection (Midterm 1, Midterm 2, Final), time limit (15/30/60 min)
+  - Session screen: countdown timer (pulses red at <2 min), 10 random questions, submit-and-advance
+  - Results screen: score, per-module breakdown, weak area callout, localStorage persistence
+- Added `ExamScore` type to `lib/types.ts` with module breakdown tracking
+- Added `generateExamQuestions()` and `saveExamScore()` to `lib/engine.ts`
+- Built `/dashboard` page:
+  - Overall stats (stars, completions, exams taken)
+  - Per-module bar chart (CSS only, no chart library)
+  - Weakest modules highlight
+  - Recent exam scores list
+  - Reset progress button with confirmation dialog
+- Enabled Exam Prep button on home page (was disabled), added Dashboard link
+- Added timer pulse CSS animation
+- Build verified, redeployed to Vercel: https://matlab-god.vercel.app
+
+### Where We Left Off
+App is live with exam prep and dashboard fully functional.
+
+### Remaining Work
+- [ ] Fill-in-the-blank challenge type (T17)
+- [ ] Sound effects toggle (T21)
+- [ ] Chat history persistence in localStorage (T30)
+- [ ] Markdown rendering in chat (T31)
+- [ ] Rate limiting on chat API (T32)

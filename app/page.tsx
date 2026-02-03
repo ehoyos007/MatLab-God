@@ -19,17 +19,23 @@ export default function Home() {
         >
           CHALLENGE ROOMS
         </Link>
-        <button
-          className="py-4 px-8 rounded-lg font-bold text-lg bg-[--color-gold] text-[--color-bg] opacity-50 cursor-not-allowed"
-          disabled
+        <Link
+          href="/exam-prep"
+          className="block text-center py-4 px-8 rounded-lg font-bold text-lg bg-[--color-gold] text-[--color-bg] hover:shadow-[0_0_20px_var(--color-gold)] transition-all"
         >
-          EXAM PREP (Soon)
-        </button>
+          EXAM PREP
+        </Link>
         <Link
           href="/cheatsheet"
           className="block text-center py-4 px-8 rounded-lg font-bold text-lg bg-[--color-green] text-[--color-bg] hover:shadow-[0_0_20px_var(--color-green)] transition-all"
         >
           CHEAT SHEET
+        </Link>
+        <Link
+          href="/dashboard"
+          className="block text-center py-4 px-8 rounded-lg font-bold text-lg bg-[--color-panel] text-[--color-dim] hover:text-[--color-text] hover:shadow-[0_0_20px_rgba(80,80,106,0.3)] transition-all border border-[--color-dim]"
+        >
+          DASHBOARD
         </Link>
       </div>
     </div>
