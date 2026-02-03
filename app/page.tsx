@@ -1,10 +1,21 @@
 'use client';
 
 import Link from 'next/link';
+import { useSoundContext } from '@/lib/SoundContext';
 
 export default function Home() {
+  const { soundEnabled, toggleSound } = useSoundContext();
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-4 relative">
+      {/* Sound toggle */}
+      <button
+        onClick={toggleSound}
+        className="absolute top-4 right-4 p-3 rounded-lg bg-[--color-panel] border border-[--color-dim] hover:border-[--color-cyan] transition-all text-xl"
+        title={soundEnabled ? 'Sound ON' : 'Sound OFF'}
+      >
+        {soundEnabled ? '🔊' : '🔇'}
+      </button>
       <h1 className="text-5xl md:text-7xl font-bold text-[--color-cyan] tracking-tight">
         MATLAB-GOD
       </h1>

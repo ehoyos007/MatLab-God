@@ -23,7 +23,7 @@
 
 - [x] **T17:** Add fill-in-the-blank challenge type
 - [x] **T18:** Build exam prep mode (timed, no-execution, cumulative scope selection)
-- [ ] **T21:** Add sound effects (optional toggle)
+- [x] **T21:** Add sound effects (optional toggle)
 
 ## Phase 3 — Full Content & Polish
 

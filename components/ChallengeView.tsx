@@ -12,6 +12,7 @@ import {
 } from '@/lib/engine';
 import { GameProgress, Challenge } from '@/lib/types';
 import { useChatContext } from '@/lib/ChatContext';
+import { useSoundContext } from '@/lib/SoundContext';
 
 function StarDisplay({ count, max }: { count: number; max: number }) {
   return (
@@ -89,6 +90,7 @@ export default function ChallengeView({ moduleId }: { moduleId: number }) {
 
   const challenge: Challenge | undefined = challenges[index];
   const { setChallengeContext } = useChatContext();
+  const { playSound } = useSoundContext();
 
   useEffect(() => {
     if (challenge) {
@@ -151,6 +153,7 @@ export default function ChallengeView({ moduleId }: { moduleId: number }) {
       const stars = calculateStars(newAttempts, hints);
       setCompleted(true);
       setFlashCorrect(true);
+      playSound('correct');
       setTimeout(() => setFlashCorrect(false), 600);
       setFeedback({
         text: challenge.explanation,
@@ -160,6 +163,7 @@ export default function ChallengeView({ moduleId }: { moduleId: number }) {
       setProgress(updated);
     } else {
       setShakeCode(true);
+      playSound('wrong');
       setTimeout(() => setShakeCode(false), 400);
 
       if (newAttempts >= 3) {
@@ -183,6 +187,7 @@ export default function ChallengeView({ moduleId }: { moduleId: number }) {
     if (!challenge || hints >= challenge.hints.length) return;
     const newHints = hints + 1;
     setHints(newHints);
+    playSound('hint');
     if (newHints > 1) {
       setMaxStars((prev) => Math.max(1, prev - 1));
     }

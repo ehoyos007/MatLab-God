@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ChatProvider } from "@/lib/ChatContext";
+import { SoundProvider } from "@/lib/SoundContext";
 import ChatSidebar from "@/components/ChatSidebar";
 
 const mono = JetBrains_Mono({
@@ -22,10 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${mono.variable} antialiased`}>
-        <ChatProvider>
-          {children}
-          <ChatSidebar />
-        </ChatProvider>
+        <SoundProvider>
+          <ChatProvider>
+            {children}
+            <ChatSidebar />
+          </ChatProvider>
+        </SoundProvider>
       </body>
     </html>
   );

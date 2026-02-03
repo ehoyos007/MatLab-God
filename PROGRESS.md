@@ -183,7 +183,30 @@ App is live with exam prep and dashboard fully functional.
 Fill-in-the-blank is live. All 3 challenge types now work: fix_bug, predict_output, fill_blank.
 
 ### Remaining Work
-- [ ] Sound effects toggle (T21)
+- [x] Sound effects toggle (T21)
+- [ ] Chat history persistence in localStorage (T30)
+- [ ] Markdown rendering in chat (T31)
+- [ ] Rate limiting on chat API (T32)
+
+## Session 7 — 2026-02-03
+
+**Focus:** Sound effects toggle (T21)
+
+### Completed
+- Implemented sound effects system with Web Audio API:
+  - `lib/SoundContext.tsx` — React context for sound preference (localStorage-persisted) and Web Audio sound generation
+  - Three retro-style sounds: correct (rising arpeggio), wrong (descending buzz), hint (soft chime)
+  - Sound toggle button on home page (top-right corner, speaker icon)
+- Wired sounds into `ChallengeView.tsx`:
+  - Correct answer: plays victory arpeggio
+  - Wrong answer: plays error buzz
+  - Hint reveal: plays info chime
+- Build verified
+
+### Where We Left Off
+Sound effects are working with toggle. Ready to deploy.
+
+### Remaining Work
 - [ ] Chat history persistence in localStorage (T30)
 - [ ] Markdown rendering in chat (T31)
 - [ ] Rate limiting on chat API (T32)
