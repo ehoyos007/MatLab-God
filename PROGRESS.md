@@ -227,5 +227,24 @@ Sound effects are working with toggle. Ready to deploy.
 Chat history now persists across sessions. Users can clear with the header button.
 
 ### Remaining Work
-- [ ] Markdown rendering in chat (T31)
+- [x] Markdown rendering in chat (T31)
+- [ ] Rate limiting on chat API (T32)
+
+## Session 7 (continued) — 2026-02-03
+
+**Focus:** Markdown rendering in chat (T31)
+
+### Completed
+- Installed `react-markdown` package
+- Replaced custom `formatMessage` function with ReactMarkdown component
+- Added custom renderers for:
+  - Code blocks (fenced) with syntax styling
+  - Inline code with gold highlighting
+  - Paragraphs, lists (ul/ol), bold, italic, links
+- Maintains retro neon theme styling
+
+### Where We Left Off
+Chat now renders full markdown including code, lists, emphasis, and links.
+
+### Remaining Work
 - [ ] Rate limiting on chat API (T32)

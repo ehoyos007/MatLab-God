@@ -1,23 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useChatContext } from '@/lib/ChatContext';
-
-function formatMessage(content: string) {
-  // Split on code blocks and render them differently
-  const parts = content.split(/(```[\s\S]*?```)/g);
-  return parts.map((part, i) => {
-    if (part.startsWith('```')) {
-      const code = part.replace(/^```\w*\n?/, '').replace(/\n?```$/, '');
-      return (
-        <pre key={i} className="my-2 p-2 rounded bg-[#08080e] text-[--color-green] text-xs overflow-x-auto">
-          <code>{code}</code>
-        </pre>
-      );
-    }
-    return <span key={i}>{part}</span>;
-  });
-}
 
 export default function ChatSidebar() {
   const { messages, isOpen, isLoading, challengeContext, toggleOpen, sendMessage, clearHistory } = useChatContext();
@@ -91,7 +76,7 @@ export default function ChatSidebar() {
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div
-                className="max-w-[85%] px-3 py-2 rounded-lg text-sm whitespace-pre-wrap"
+                className={`max-w-[85%] px-3 py-2 rounded-lg text-sm chat-message ${msg.role === 'user' ? 'chat-user' : 'chat-assistant'}`}
                 style={{
                   background: msg.role === 'user' ? 'rgba(0,255,245,0.15)' : 'rgba(57,255,20,0.1)',
                   color: msg.role === 'user' ? 'var(--color-cyan)' : 'var(--color-green)',
@@ -99,7 +84,39 @@ export default function ChatSidebar() {
                   borderWidth: 1,
                 }}
               >
-                {formatMessage(msg.content)}
+                <ReactMarkdown
+                  components={{
+                    code: ({ className, children, ...props }) => {
+                      const isBlock = className?.includes('language-');
+                      if (isBlock) {
+                        return (
+                          <pre className="my-2 p-2 rounded bg-[#08080e] text-[--color-green] text-xs overflow-x-auto">
+                            <code className={className} {...props}>{children}</code>
+                          </pre>
+                        );
+                      }
+                      return (
+                        <code className="px-1 py-0.5 rounded bg-[#08080e] text-[--color-gold] text-xs" {...props}>
+                          {children}
+                        </code>
+                      );
+                    },
+                    pre: ({ children }) => <>{children}</>,
+                    p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                    ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                    ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                    li: ({ children }) => <li>{children}</li>,
+                    strong: ({ children }) => <strong className="font-bold text-[--color-text]">{children}</strong>,
+                    em: ({ children }) => <em className="italic">{children}</em>,
+                    a: ({ href, children }) => (
+                      <a href={href} target="_blank" rel="noopener noreferrer" className="underline hover:text-[--color-text]">
+                        {children}
+                      </a>
+                    ),
+                  }}
+                >
+                  {msg.content}
+                </ReactMarkdown>
               </div>
             </div>
           ))}

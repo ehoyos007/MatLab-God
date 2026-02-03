@@ -38,6 +38,6 @@
 ## Phase 4 — Future Enhancements
 
 - [x] **T30:** Persist chat history in localStorage
-- [ ] **T31:** Markdown rendering in chat (react-markdown)
+- [x] **T31:** Markdown rendering in chat (react-markdown)
 - [ ] **T32:** Rate limiting on chat API
 - [x] **T33:** Progress dashboard screen (overall stats, per-module breakdown)
