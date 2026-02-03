@@ -19,9 +19,9 @@
 - [x] Custom JS validators for fix-the-bug challenges
 - [x] Build passes, server responds correctly
 
-## Phase 2 — Exam Prep & Polish
+## Phase 2 — Exam Prep & Polish [COMPLETE]
 
-- [ ] **T17:** Add fill-in-the-blank challenge type
+- [x] **T17:** Add fill-in-the-blank challenge type
 - [x] **T18:** Build exam prep mode (timed, no-execution, cumulative scope selection)
 - [ ] **T21:** Add sound effects (optional toggle)
 

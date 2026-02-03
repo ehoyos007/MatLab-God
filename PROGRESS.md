@@ -156,7 +156,33 @@ App is fully deployed and live with AI chatbot working. All 11 modules playable.
 App is live with exam prep and dashboard fully functional.
 
 ### Remaining Work
-- [ ] Fill-in-the-blank challenge type (T17)
+- [x] Fill-in-the-blank challenge type (T17)
+- [ ] Sound effects toggle (T21)
+- [ ] Chat history persistence in localStorage (T30)
+- [ ] Markdown rendering in chat (T31)
+- [ ] Rate limiting on chat API (T32)
+
+## Session 6 — 2026-02-03
+
+**Focus:** Fill-in-the-blank challenge type
+
+### Completed
+- Implemented fill-in-the-blank challenge type (T17):
+  - Added `blanks` field to `Challenge` type for storing correct answers in order
+  - Added `checkBlanks()` function in `lib/engine.ts` to validate user answers
+  - Created `FillBlankCode` component that renders code with inline `<input>` fields where `___` markers appear
+  - Updated `ChallengeView` to detect `fill_blank` type and render the fill-blank UI
+- Added 3 fill_blank challenges:
+  - M1_C6: Matrix Creation (zeros function + indexing)
+  - M3_C6: Matrix Slicing (row extraction with colon)
+  - M6_C6: Formatted Output (fprintf with %d placeholders)
+- Deployed to Vercel: https://matlab-god.vercel.app
+- Committed and pushed to GitHub
+
+### Where We Left Off
+Fill-in-the-blank is live. All 3 challenge types now work: fix_bug, predict_output, fill_blank.
+
+### Remaining Work
 - [ ] Sound effects toggle (T21)
 - [ ] Chat history persistence in localStorage (T30)
 - [ ] Markdown rendering in chat (T31)
