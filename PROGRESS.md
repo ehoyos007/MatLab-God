@@ -207,6 +207,25 @@ Fill-in-the-blank is live. All 3 challenge types now work: fix_bug, predict_outp
 Sound effects are working with toggle. Ready to deploy.
 
 ### Remaining Work
-- [ ] Chat history persistence in localStorage (T30)
+- [x] Chat history persistence in localStorage (T30)
+- [ ] Markdown rendering in chat (T31)
+- [ ] Rate limiting on chat API (T32)
+
+## Session 7 (continued) — 2026-02-03
+
+**Focus:** Chat history persistence (T30)
+
+### Completed
+- Added localStorage persistence for chat history:
+  - Load messages from localStorage on mount
+  - Save messages after streaming completes (not during)
+  - `isStreamingRef` to avoid saving partial responses
+- Added `clearHistory()` function to clear chat and localStorage
+- Added "Clear" button in chat sidebar header (only shows when messages exist)
+
+### Where We Left Off
+Chat history now persists across sessions. Users can clear with the header button.
+
+### Remaining Work
 - [ ] Markdown rendering in chat (T31)
 - [ ] Rate limiting on chat API (T32)

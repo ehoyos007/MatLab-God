@@ -20,7 +20,7 @@ function formatMessage(content: string) {
 }
 
 export default function ChatSidebar() {
-  const { messages, isOpen, isLoading, challengeContext, toggleOpen, sendMessage } = useChatContext();
+  const { messages, isOpen, isLoading, challengeContext, toggleOpen, sendMessage, clearHistory } = useChatContext();
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -65,9 +65,20 @@ export default function ChatSidebar() {
         }}
       >
         {/* Header */}
-        <div className="p-4 border-b border-[#1a1a2e] flex items-center gap-2">
-          <span className="text-[--color-cyan] font-bold text-lg">MATLAB TUTOR</span>
-          <span className="text-[--color-dim] text-xs">AI Assistant</span>
+        <div className="p-4 border-b border-[#1a1a2e] flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-[--color-cyan] font-bold text-lg">MATLAB TUTOR</span>
+            <span className="text-[--color-dim] text-xs">AI Assistant</span>
+          </div>
+          {messages.length > 0 && (
+            <button
+              onClick={clearHistory}
+              className="text-xs px-2 py-1 rounded border border-[--color-dim] text-[--color-dim] hover:border-[--color-pink] hover:text-[--color-pink] transition-colors"
+              title="Clear chat history"
+            >
+              Clear
+            </button>
+          )}
         </div>
 
         {/* Messages */}
