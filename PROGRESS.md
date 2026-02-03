@@ -190,83 +190,53 @@ Fill-in-the-blank is live. All 3 challenge types now work: fix_bug, predict_outp
 
 ## Session 7 — 2026-02-03
 
-**Focus:** Sound effects toggle (T21)
+**Focus:** Phase 4 completion (T21, T30, T31, T32)
 
 ### Completed
-- Implemented sound effects system with Web Audio API:
-  - `lib/SoundContext.tsx` — React context for sound preference (localStorage-persisted) and Web Audio sound generation
-  - Three retro-style sounds: correct (rising arpeggio), wrong (descending buzz), hint (soft chime)
-  - Sound toggle button on home page (top-right corner, speaker icon)
-- Wired sounds into `ChallengeView.tsx`:
-  - Correct answer: plays victory arpeggio
-  - Wrong answer: plays error buzz
-  - Hint reveal: plays info chime
-- Build verified
 
-### Where We Left Off
-Sound effects are working with toggle. Ready to deploy.
+**T21: Sound effects toggle**
+- `lib/SoundContext.tsx` — Web Audio API with localStorage-persisted preference
+- Three retro sounds: correct (rising arpeggio), wrong (descending buzz), hint (chime)
+- Toggle button on home page (speaker icon, top-right)
 
-### Remaining Work
-- [x] Chat history persistence in localStorage (T30)
-- [ ] Markdown rendering in chat (T31)
-- [ ] Rate limiting on chat API (T32)
+**T30: Chat history persistence**
+- Load/save messages to localStorage (after streaming completes)
+- `clearHistory()` function + "Clear" button in chat header
 
-## Session 7 (continued) — 2026-02-03
+**T31: Markdown rendering in chat**
+- Installed `react-markdown`
+- Custom renderers for code blocks, inline code, lists, emphasis, links
 
-**Focus:** Chat history persistence (T30)
+**T32: Rate limiting on chat API**
+- Sliding window: 10 requests/min per IP
+- 429 response with Retry-After header
+- Client-side error handling
 
-### Completed
-- Added localStorage persistence for chat history:
-  - Load messages from localStorage on mount
-  - Save messages after streaming completes (not during)
-  - `isStreamingRef` to avoid saving partial responses
-- Added `clearHistory()` function to clear chat and localStorage
-- Added "Clear" button in chat sidebar header (only shows when messages exist)
+### Commits
+- `b99dcff` — Add sound effects toggle (T21)
+- `e6fd374` — Add chat history persistence (T30)
+- `c80ad8a` — Add markdown rendering in chat (T31)
+- `c131712` — Add rate limiting on chat API (T32)
 
-### Where We Left Off
-Chat history now persists across sessions. Users can clear with the header button.
+---
 
-### Remaining Work
-- [x] Markdown rendering in chat (T31)
-- [ ] Rate limiting on chat API (T32)
+## Project Complete
 
-## Session 7 (continued) — 2026-02-03
+**MatLab-God** is feature-complete and deployed at https://matlab-god.vercel.app
 
-**Focus:** Markdown rendering in chat (T31)
+### Final Feature Set
+- 55 challenges across 11 modules (aligned to ECH 3854 syllabus)
+- 3 challenge types: fix_bug, predict_output, fill_blank
+- 3-star scoring with progressive hints
+- Exam prep mode (timed, scope selection)
+- Progress dashboard with stats and weak area tracking
+- AI tutor chatbot (Claude-powered, streaming, challenge-aware)
+- Sound effects with toggle
+- Chat history persistence
+- Markdown rendering in chat
+- Rate limiting (10 req/min)
+- Mobile responsive
+- Retro neon theme
 
-### Completed
-- Installed `react-markdown` package
-- Replaced custom `formatMessage` function with ReactMarkdown component
-- Added custom renderers for:
-  - Code blocks (fenced) with syntax styling
-  - Inline code with gold highlighting
-  - Paragraphs, lists (ul/ol), bold, italic, links
-- Maintains retro neon theme styling
-
-### Where We Left Off
-Chat now renders full markdown including code, lists, emphasis, and links.
-
-### Remaining Work
-- [x] Rate limiting on chat API (T32)
-
-## Session 7 (continued) — 2026-02-03
-
-**Focus:** Rate limiting on chat API (T32)
-
-### Completed
-- Implemented sliding window rate limiter in `/api/chat`:
-  - 10 requests per minute per IP
-  - Returns 429 with Retry-After header when exceeded
-  - In-memory store with automatic cleanup
-- Updated ChatContext to handle 429 errors gracefully with user-friendly message
-- Rate limit headers included in responses (X-RateLimit-*)
-
-### Where We Left Off
-Rate limiting is active. Phase 4 complete!
-
-### Phase 4 Complete
-All tasks finished:
-- [x] T21: Sound effects toggle
-- [x] T30: Chat history persistence
-- [x] T31: Markdown rendering in chat
-- [x] T32: Rate limiting on chat API
+### Repository
+https://github.com/ehoyos007/MatLab-God
