@@ -12,6 +12,7 @@ export interface Challenge {
   hints: string[];
   explanation: string;
   validator?: (studentCode: string) => boolean; // custom JS validator
+  blanks?: string[]; // correct answers for fill_blank type (in order)
 }
 
 export interface ModuleData {

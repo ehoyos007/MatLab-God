@@ -7,6 +7,7 @@ import {
   loadProgress,
   saveChallengeResult,
   checkAnswer,
+  checkBlanks,
   calculateStars,
 } from '@/lib/engine';
 import { GameProgress, Challenge } from '@/lib/types';
@@ -24,6 +25,45 @@ function StarDisplay({ count, max }: { count: number; max: number }) {
   );
 }
 
+function FillBlankCode({
+  code,
+  answers,
+  onChange,
+  disabled,
+}: {
+  code: string;
+  answers: string[];
+  onChange: (answers: string[]) => void;
+  disabled: boolean;
+}) {
+  // Split code by ___ markers
+  const parts = code.split('___');
+
+  return (
+    <pre className="whitespace-pre-wrap leading-relaxed">
+      {parts.map((part, i) => (
+        <span key={i}>
+          {part}
+          {i < parts.length - 1 && (
+            <input
+              type="text"
+              className="inline-block w-24 md:w-32 mx-1 px-2 py-0.5 rounded bg-[--color-bg] border border-[--color-cyan] text-[--color-cyan] font-mono text-sm focus:outline-none focus:border-[--color-green] focus:shadow-[0_0_8px_var(--color-cyan)] disabled:opacity-50"
+              value={answers[i] ?? ''}
+              onChange={(e) => {
+                const newAnswers = [...answers];
+                newAnswers[i] = e.target.value;
+                onChange(newAnswers);
+              }}
+              disabled={disabled}
+              placeholder={`blank ${i + 1}`}
+            />
+          )}
+        </span>
+      ))}
+    </pre>
+  );
+}
+
 const TYPE_LABELS: Record<string, { label: string; color: string }> = {
   fix_bug: { label: 'FIX THE BUG', color: 'text-[--color-pink]' },
   predict_output: { label: 'PREDICT OUTPUT', color: 'text-[--color-gold]' },
@@ -37,6 +77,7 @@ export default function ChallengeView({ moduleId }: { moduleId: number }) {
   const [index, setIndex] = useState(0);
   const [code, setCode] = useState('');
   const [answer, setAnswer] = useState('');
+  const [blankAnswers, setBlankAnswers] = useState<string[]>([]);
   const [progress, setProgress] = useState<GameProgress>({ modules: {}, examScores: [] });
   const [hints, setHints] = useState(0);
   const [attempts, setAttempts] = useState(0);
@@ -65,6 +106,7 @@ export default function ChallengeView({ moduleId }: { moduleId: number }) {
   const loadChallenge = useCallback((ch: Challenge) => {
     setCode(ch.brokenCode);
     setAnswer('');
+    setBlankAnswers(ch.blanks ? ch.blanks.map(() => '') : []);
     setHints(0);
     setAttempts(0);
     setMaxStars(3);
@@ -97,8 +139,13 @@ export default function ChallengeView({ moduleId }: { moduleId: number }) {
     const newAttempts = attempts + 1;
     setAttempts(newAttempts);
 
-    const studentInput = challenge.type === 'predict_output' ? answer : code;
-    const result = checkAnswer(studentInput, challenge);
+    let result: { correct: boolean; feedback: string };
+    if (challenge.type === 'fill_blank' && challenge.blanks) {
+      result = checkBlanks(blankAnswers, challenge.blanks);
+    } else {
+      const studentInput = challenge.type === 'predict_output' ? answer : code;
+      result = checkAnswer(studentInput, challenge);
+    }
 
     if (result.correct) {
       const stars = calculateStars(newAttempts, hints);
@@ -199,40 +246,66 @@ export default function ChallengeView({ moduleId }: { moduleId: number }) {
       </div>
 
       {/* Code panels */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="text-[--color-green] text-sm font-bold mb-1 block">
-            {challenge.type === 'predict_output' ? 'Code (read-only):' : 'Your Code:'}
+      {challenge.type === 'fill_blank' && challenge.blanks ? (
+        <div className="mb-4">
+          <label className="text-[--color-cyan] text-sm font-bold mb-2 block">
+            Fill in the blanks:
           </label>
-          <textarea
-            className={`code-editor h-40 md:h-48 ${shakeCode ? 'shake' : ''} ${challenge.type === 'predict_output' ? 'readonly' : ''}`}
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            readOnly={challenge.type === 'predict_output'}
-            spellCheck={false}
-          />
-        </div>
-        <div>
-          <label className="text-[--color-gold] text-sm font-bold mb-1 block">
-            {challenge.type === 'predict_output' ? 'Your Answer:' : 'Expected Output:'}
-          </label>
-          {challenge.type === 'predict_output' ? (
-            <textarea
-              className="code-editor h-40 md:h-48"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              placeholder="Type the expected output..."
-              spellCheck={false}
+          <div className={`code-editor ${shakeCode ? 'shake' : ''}`}>
+            <FillBlankCode
+              code={challenge.brokenCode}
+              answers={blankAnswers}
+              onChange={setBlankAnswers}
+              disabled={completed}
             />
-          ) : (
+          </div>
+          <div className="mt-4">
+            <label className="text-[--color-gold] text-sm font-bold mb-1 block">
+              Expected Output:
+            </label>
             <textarea
-              className="code-editor readonly h-40 md:h-48"
+              className="code-editor readonly h-24"
               value={challenge.expectedOutput}
               readOnly
             />
-          )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="text-[--color-green] text-sm font-bold mb-1 block">
+              {challenge.type === 'predict_output' ? 'Code (read-only):' : 'Your Code:'}
+            </label>
+            <textarea
+              className={`code-editor h-40 md:h-48 ${shakeCode ? 'shake' : ''} ${challenge.type === 'predict_output' ? 'readonly' : ''}`}
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              readOnly={challenge.type === 'predict_output'}
+              spellCheck={false}
+            />
+          </div>
+          <div>
+            <label className="text-[--color-gold] text-sm font-bold mb-1 block">
+              {challenge.type === 'predict_output' ? 'Your Answer:' : 'Expected Output:'}
+            </label>
+            {challenge.type === 'predict_output' ? (
+              <textarea
+                className="code-editor h-40 md:h-48"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                placeholder="Type the expected output..."
+                spellCheck={false}
+              />
+            ) : (
+              <textarea
+                className="code-editor readonly h-40 md:h-48"
+                value={challenge.expectedOutput}
+                readOnly
+              />
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Buttons */}
       <div className="flex flex-wrap items-center gap-3 mb-4">

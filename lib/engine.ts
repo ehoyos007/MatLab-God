@@ -84,6 +84,24 @@ export function checkAnswer(
   };
 }
 
+// --- Fill-in-the-blank helpers ---
+
+export function checkBlanks(
+  userAnswers: string[],
+  correctAnswers: string[]
+): { correct: boolean; feedback: string } {
+  if (userAnswers.length !== correctAnswers.length) {
+    return { correct: false, feedback: 'Missing answers.' };
+  }
+  const normalize = (s: string) => s.trim().toLowerCase();
+  for (let i = 0; i < correctAnswers.length; i++) {
+    if (normalize(userAnswers[i]) !== normalize(correctAnswers[i])) {
+      return { correct: false, feedback: `Blank ${i + 1} is incorrect.` };
+    }
+  }
+  return { correct: true, feedback: '' };
+}
+
 // --- Star calculation ---
 
 export function calculateStars(attempts: number, hintsUsed: number): number {
