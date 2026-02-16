@@ -8,14 +8,25 @@ export default function ChatSidebar() {
   const { messages, isOpen, isLoading, challengeContext, toggleOpen, sendMessage, clearHistory } = useChatContext();
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isNearBottomRef = useRef(true);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight);
+    if (isNearBottomRef.current) {
+      scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight);
+    }
   }, [messages]);
+
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    // Consider "near bottom" if within 100px of the bottom
+    isNearBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+  };
 
   const handleSend = () => {
     const text = input.trim();
     if (!text || isLoading) return;
+    isNearBottomRef.current = true;
     setInput('');
     sendMessage(text);
   };
@@ -67,7 +78,7 @@ export default function ChatSidebar() {
         </div>
 
         {/* Messages */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto p-4 space-y-3">
           {messages.length === 0 && (
             <p className="text-[--color-dim] text-sm text-center mt-8">
               Ask me anything about MATLAB!
