@@ -4,11 +4,45 @@ import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useChatContext } from '@/lib/ChatContext';
 
+const MIN_WIDTH = 300;
+const MAX_WIDTH = 700;
+const DEFAULT_WIDTH = 380;
+
 export default function ChatSidebar() {
   const { messages, isOpen, isLoading, challengeContext, toggleOpen, sendMessage, clearHistory } = useChatContext();
   const [input, setInput] = useState('');
+  const [width, setWidth] = useState(DEFAULT_WIDTH);
   const scrollRef = useRef<HTMLDivElement>(null);
   const isNearBottomRef = useRef(true);
+  const isDragging = useRef(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      const newWidth = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, window.innerWidth - e.clientX));
+      setWidth(newWidth);
+    };
+    const handleMouseUp = () => {
+      if (isDragging.current) {
+        isDragging.current = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      }
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
+  const startResize = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isDragging.current = true;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
 
   useEffect(() => {
     if (isNearBottomRef.current) {
@@ -53,13 +87,21 @@ export default function ChatSidebar() {
 
       {/* Sidebar */}
       <div
-        className="fixed top-0 right-0 z-40 h-full w-full sm:w-[380px] flex flex-col transition-transform duration-300"
+        className="fixed top-0 right-0 z-40 h-full flex flex-col transition-transform duration-300"
         style={{
+          width: `min(100vw, ${width}px)`,
           background: 'var(--color-panel)',
           borderLeft: '1px solid #1a1a2e',
           transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
         }}
       >
+        {/* Resize handle */}
+        <div
+          onMouseDown={startResize}
+          className="absolute top-0 left-0 w-1.5 h-full cursor-col-resize z-50 group"
+        >
+          <div className="w-full h-full bg-transparent group-hover:bg-[--color-cyan] transition-colors opacity-0 group-hover:opacity-40" />
+        </div>
         {/* Header */}
         <div className="p-4 border-b border-[#1a1a2e] flex items-center justify-between">
           <div className="flex items-center gap-2">
