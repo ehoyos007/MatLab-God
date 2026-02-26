@@ -41,3 +41,12 @@
 - [x] **T31:** Markdown rendering in chat (react-markdown)
 - [x] **T32:** Rate limiting on chat API
 - [x] **T33:** Progress dashboard screen (overall stats, per-module breakdown)
+
+## Phase 5 — Chat UX Refinements
+
+- [x] **T34:** Simplify chat responses (brevity prompt + reduced max_tokens)
+- [x] **T35:** Add follow-up text input on assistant response blocks
+
+## Bug Fixes
+
+- [x] **BF1:** Fix chat sidebar scroll — users unable to scroll up due to unconditional scroll-to-bottom on every streaming chunk

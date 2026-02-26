@@ -11,6 +11,7 @@ const DEFAULT_WIDTH = 380;
 export default function ChatSidebar() {
   const { messages, isOpen, isLoading, challengeContext, toggleOpen, sendMessage, clearHistory } = useChatContext();
   const [input, setInput] = useState('');
+  const [followUpInputs, setFollowUpInputs] = useState<Record<number, string>>({});
   const [width, setWidth] = useState(DEFAULT_WIDTH);
   const scrollRef = useRef<HTMLDivElement>(null);
   const isNearBottomRef = useRef(true);
@@ -70,6 +71,14 @@ export default function ChatSidebar() {
     sendMessage(`Help me understand this challenge: "${challengeContext.title}". ${challengeContext.description}`);
   };
 
+  const handleFollowUp = (index: number) => {
+    const text = followUpInputs[index]?.trim();
+    if (!text || isLoading) return;
+    isNearBottomRef.current = true;
+    setFollowUpInputs((prev) => ({ ...prev, [index]: '' }));
+    sendMessage(text);
+  };
+
   return (
     <>
       {/* Toggle button */}
@@ -127,7 +136,7 @@ export default function ChatSidebar() {
             </p>
           )}
           {messages.map((msg, i) => (
-            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
               <div
                 className={`max-w-[85%] px-3 py-2 rounded-lg text-sm chat-message ${msg.role === 'user' ? 'chat-user' : 'chat-assistant'}`}
                 style={{
@@ -171,6 +180,25 @@ export default function ChatSidebar() {
                   {msg.content}
                 </ReactMarkdown>
               </div>
+              {/* Follow-up input below assistant messages */}
+              {msg.role === 'assistant' && msg.content && !isLoading && (
+                <div className="max-w-[85%] mt-1 flex gap-1">
+                  <input
+                    value={followUpInputs[i] || ''}
+                    onChange={(e) => setFollowUpInputs((prev) => ({ ...prev, [i]: e.target.value }))}
+                    onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleFollowUp(i)}
+                    placeholder="Follow up..."
+                    className="flex-1 px-2 py-1 rounded text-xs bg-[#08080e] text-[--color-text] border border-[rgba(57,255,20,0.15)] focus:border-[--color-green] focus:outline-none placeholder:text-[--color-dim]"
+                  />
+                  <button
+                    onClick={() => handleFollowUp(i)}
+                    disabled={!followUpInputs[i]?.trim()}
+                    className="px-2 py-1 rounded text-xs font-bold bg-[rgba(57,255,20,0.15)] text-[--color-green] disabled:opacity-30 hover:bg-[rgba(57,255,20,0.25)] transition-colors"
+                  >
+                    ASK
+                  </button>
+                </div>
+              )}
             </div>
           ))}
           {isLoading && messages[messages.length - 1]?.role !== 'assistant' && (

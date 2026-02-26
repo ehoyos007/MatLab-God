@@ -218,6 +218,55 @@ Fill-in-the-blank is live. All 3 challenge types now work: fix_bug, predict_outp
 - `c80ad8a` — Add markdown rendering in chat (T31)
 - `c131712` — Add rate limiting on chat API (T32)
 
+## Session 8 — 2026-02-16
+
+**Focus:** Bug fix — chat scroll behavior
+
+### Completed
+
+**Chat scroll-up bug fix**
+- User-reported bug: unable to scroll up in the AI chatbot sidebar
+- Root cause: `useEffect` in `ChatSidebar.tsx` unconditionally called `scrollTo(bottom)` on every `messages` change — including every streaming chunk, making it impossible to scroll up
+- Fix: Added `isNearBottomRef` to track scroll position; auto-scroll only fires when user is within 100px of bottom; resets on send so new messages are visible
+- Browser-tested: confirmed scroll-up stays in place during and after streaming, and sending a new message correctly scrolls back to bottom
+
+### Commit
+- `59fc3ab` — Fix chat sidebar scroll-to-bottom hijacking user scroll position
+
+## Session 9 — 2026-02-25
+
+**Focus:** UX improvement — resizable chat sidebar
+
+### Completed
+
+**Resizable chat sidebar**
+- Added drag-to-resize handle on the left edge of the chat sidebar
+- Width adjustable between 300px–700px (default 380px)
+- Visual feedback: cyan highlight on hover, col-resize cursor while dragging
+- Text selection disabled during drag for smooth UX
+- Mobile: still caps at full viewport width
+
+### Commit
+- `36851f8` — Add resizable width to chat sidebar via drag handle
+
+## Session 10 — 2026-02-25
+
+**Focus:** Chat UX — simpler responses + follow-up inputs
+
+### Completed
+
+**Simpler chat responses**
+- Updated system prompts to enforce brevity: "1-3 sentences max, no preamble, no filler, no restating the question"
+- Reduced `max_tokens` from 1024 to 512
+
+**Follow-up input on assistant messages**
+- Added inline text box + ASK button below each green (assistant) response block
+- Users can type a follow-up question directly under the response they want to drill into
+- Styled with green theme, hidden during streaming to avoid clutter
+
+### Summary
+Chat now gives minimal direct answers and each response has a follow-up input for further questioning.
+
 ---
 
 ## Project Complete

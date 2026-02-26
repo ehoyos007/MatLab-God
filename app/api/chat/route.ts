@@ -70,6 +70,8 @@ interface ChallengeContext {
 }
 
 function buildSystemPrompt(ctx?: ChallengeContext): string {
+  const brevityRule = `IMPORTANT: Give the shortest possible answer. 1-3 sentences max unless a code example is absolutely needed. No preamble, no filler, no restating the question. Just the answer.`;
+
   if (ctx) {
     return `You are a MATLAB tutor inside a learning game called MATLAB-GOD. The student is working on a challenge. Guide them without giving the answer directly — use Socratic questioning, give hints, and help them reason through the problem.
 
@@ -83,10 +85,12 @@ Current challenge:
 ${ctx.code}
 \`\`\`
 
-Be concise. Use MATLAB code examples when helpful. Never give the direct solution.`;
+${brevityRule} Never give the direct solution.`;
   }
 
-  return `You are a MATLAB expert tutor inside a learning game called MATLAB-GOD. Help the student learn MATLAB concepts. Be concise, use code examples when helpful. Format code blocks with \`\`\`matlab.`;
+  return `You are a MATLAB expert tutor inside a learning game called MATLAB-GOD. Help the student learn MATLAB concepts. Format code blocks with \`\`\`matlab.
+
+${brevityRule}`;
 }
 
 export async function POST(req: NextRequest) {
@@ -115,7 +119,7 @@ export async function POST(req: NextRequest) {
 
     const stream = anthropic.messages.stream({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
+      max_tokens: 512,
       system: buildSystemPrompt(challengeContext),
       messages,
     });
