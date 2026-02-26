@@ -13,6 +13,8 @@ export default function ChatSidebar() {
   const [input, setInput] = useState('');
   const [followUpInputs, setFollowUpInputs] = useState<Record<number, string>>({});
   const [width, setWidth] = useState(DEFAULT_WIDTH);
+  const [exampleStates, setExampleStates] = useState<Record<number, 'loading' | 'done'>>({});
+  const [exampleContent, setExampleContent] = useState<Record<number, string>>({});
   const scrollRef = useRef<HTMLDivElement>(null);
   const isNearBottomRef = useRef(true);
   const isDragging = useRef(false);
@@ -77,6 +79,42 @@ export default function ChatSidebar() {
     isNearBottomRef.current = true;
     setFollowUpInputs((prev) => ({ ...prev, [index]: '' }));
     sendMessage(text);
+  };
+
+  const handleExampleRequest = async (index: number) => {
+    if (exampleStates[index] || isLoading) return;
+    setExampleStates((prev) => ({ ...prev, [index]: 'loading' }));
+    isNearBottomRef.current = true;
+
+    // Build messages up to this point + ask for an example
+    const contextMessages = messages.slice(0, index + 1).map(({ role, content }) => ({ role, content }));
+    contextMessages.push({ role: 'user', content: 'Give me a short code example for what you just explained.' });
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: contextMessages, challengeContext }),
+      });
+      if (!res.ok) throw new Error('Failed');
+
+      const reader = res.body!.getReader();
+      const decoder = new TextDecoder();
+      let text = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        text += decoder.decode(value, { stream: true });
+        const current = text;
+        setExampleContent((prev) => ({ ...prev, [index]: current }));
+      }
+
+      setExampleStates((prev) => ({ ...prev, [index]: 'done' }));
+    } catch {
+      setExampleContent((prev) => ({ ...prev, [index]: 'Could not load example.' }));
+      setExampleStates((prev) => ({ ...prev, [index]: 'done' }));
+    }
   };
 
   return (
@@ -180,24 +218,74 @@ export default function ChatSidebar() {
                   {msg.content}
                 </ReactMarkdown>
               </div>
-              {/* Follow-up input below assistant messages */}
+              {/* Follow-up input + example button below assistant messages */}
               {msg.role === 'assistant' && msg.content && !isLoading && (
-                <div className="max-w-[85%] mt-1 flex gap-1">
-                  <input
-                    value={followUpInputs[i] || ''}
-                    onChange={(e) => setFollowUpInputs((prev) => ({ ...prev, [i]: e.target.value }))}
-                    onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleFollowUp(i)}
-                    placeholder="Follow up..."
-                    className="flex-1 px-2 py-1 rounded text-xs bg-[#08080e] text-[--color-text] border border-[rgba(57,255,20,0.15)] focus:border-[--color-green] focus:outline-none placeholder:text-[--color-dim]"
-                  />
-                  <button
-                    onClick={() => handleFollowUp(i)}
-                    disabled={!followUpInputs[i]?.trim()}
-                    className="px-2 py-1 rounded text-xs font-bold bg-[rgba(57,255,20,0.15)] text-[--color-green] disabled:opacity-30 hover:bg-[rgba(57,255,20,0.25)] transition-colors"
-                  >
-                    ASK
-                  </button>
-                </div>
+                <>
+                  <div className="max-w-[85%] mt-1 flex gap-1">
+                    <input
+                      value={followUpInputs[i] || ''}
+                      onChange={(e) => setFollowUpInputs((prev) => ({ ...prev, [i]: e.target.value }))}
+                      onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleFollowUp(i)}
+                      placeholder="Follow up..."
+                      className="flex-1 px-2 py-1 rounded text-xs bg-[#08080e] text-[--color-text] border border-[rgba(57,255,20,0.15)] focus:border-[--color-green] focus:outline-none placeholder:text-[--color-dim]"
+                    />
+                    <button
+                      onClick={() => handleFollowUp(i)}
+                      disabled={!followUpInputs[i]?.trim()}
+                      className="px-2 py-1 rounded text-xs font-bold bg-[rgba(57,255,20,0.15)] text-[--color-green] disabled:opacity-30 hover:bg-[rgba(57,255,20,0.25)] transition-colors"
+                    >
+                      ASK
+                    </button>
+                  </div>
+                  {!exampleStates[i] && (
+                    <button
+                      onClick={() => handleExampleRequest(i)}
+                      className="max-w-[85%] mt-1 px-3 py-1.5 rounded-md text-xs font-bold border border-[--color-dim] text-[--color-dim] hover:border-[--color-gold] hover:text-[--color-gold] hover:shadow-[0_0_8px_rgba(255,213,0,0.15)] transition-all cursor-pointer"
+                    >
+                      Show me an example
+                    </button>
+                  )}
+                  {exampleStates[i] === 'loading' && !exampleContent[i] && (
+                    <div className="max-w-[85%] mt-1 px-3 py-1.5 text-xs text-[--color-dim]">
+                      Loading example...
+                    </div>
+                  )}
+                  {exampleContent[i] && (
+                    <div
+                      className="example-reveal max-w-[85%] mt-1 px-3 py-2 rounded-lg text-sm"
+                      style={{
+                        background: 'rgba(255,213,0,0.08)',
+                        color: 'var(--color-gold)',
+                        borderWidth: 1,
+                        borderColor: 'rgba(255,213,0,0.25)',
+                      }}
+                    >
+                      <ReactMarkdown
+                        components={{
+                          code: ({ className, children, ...props }) => {
+                            const isBlock = className?.includes('language-');
+                            if (isBlock) {
+                              return (
+                                <pre className="my-2 p-2 rounded bg-[#08080e] text-[--color-green] text-xs overflow-x-auto">
+                                  <code className={className} {...props}>{children}</code>
+                                </pre>
+                              );
+                            }
+                            return (
+                              <code className="px-1 py-0.5 rounded bg-[#08080e] text-[--color-gold] text-xs" {...props}>
+                                {children}
+                              </code>
+                            );
+                          },
+                          pre: ({ children }) => <>{children}</>,
+                          p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        }}
+                      >
+                        {exampleContent[i]}
+                      </ReactMarkdown>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ))}
