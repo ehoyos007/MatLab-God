@@ -70,7 +70,7 @@ interface ChallengeContext {
 }
 
 function buildSystemPrompt(ctx?: ChallengeContext): string {
-  const brevityRule = `IMPORTANT: Give the shortest possible answer. 1-3 sentences max unless a code example is absolutely needed. No preamble, no filler, no restating the question. Just the answer.`;
+  const brevityRule = `CRITICAL RULE: Reply in exactly ONE sentence. Never use bullet points, numbered lists, or multiple options. Give a single direct answer — no alternatives, no "you could also", no preamble. If a code snippet is needed, show only ONE short example with no explanation before or after it.`;
 
   if (ctx) {
     return `You are a MATLAB tutor inside a learning game called MATLAB-GOD. The student is working on a challenge. Guide them without giving the answer directly — use Socratic questioning, give hints, and help them reason through the problem.
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
 
     const stream = anthropic.messages.stream({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 512,
+      max_tokens: 200,
       system: buildSystemPrompt(challengeContext),
       messages,
     });
