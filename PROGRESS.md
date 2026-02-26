@@ -256,16 +256,21 @@ Fill-in-the-blank is live. All 3 challenge types now work: fix_bug, predict_outp
 ### Completed
 
 **Simpler chat responses**
-- Updated system prompts to enforce brevity: "1-3 sentences max, no preamble, no filler, no restating the question"
-- Reduced `max_tokens` from 1024 to 512
+- Updated system prompts to enforce strict single-sentence replies: no bullet points, no lists, no multiple options
+- Reduced `max_tokens` from 1024 → 512 → 200 across two iterations
+- User feedback loop: first pass was still too verbose, tightened further
 
 **Follow-up input on assistant messages**
 - Added inline text box + ASK button below each green (assistant) response block
 - Users can type a follow-up question directly under the response they want to drill into
 - Styled with green theme, hidden during streaming to avoid clutter
 
+### Commits
+- `1f3334d` — Simplify chat responses and add follow-up inputs on assistant messages
+- `2c2901b` — Force single-sentence chat responses, no lists or options
+
 ### Summary
-Chat now gives minimal direct answers and each response has a follow-up input for further questioning.
+Chat gives one-sentence answers with a follow-up input on each response for drilling deeper.
 
 ---
 
