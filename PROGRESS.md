@@ -294,3 +294,23 @@ Chat gives one-sentence answers with a follow-up input on each response for dril
 
 ### Repository
 https://github.com/ehoyos007/MatLab-God
+
+## Session 11 — 2026-02-26
+
+**Focus:** UX polish — answer format guidance for predict_output challenges
+
+**Summary:** Added animated "Give me an example" button on predict-output challenges to help students understand MATLAB output formatting
+
+### Completed
+- Added "Give me an example" button below the answer textarea on predict_output challenges
+- Button shows MATLAB output format examples (number, text, variable assignment, vector)
+- Includes tip that spacing doesn't need to be exact
+- Animated reveal using slide-down + fade-in CSS animation (cubic-bezier easing)
+- Button disappears after click, replaced by the example panel (resets on challenge navigation)
+- Styled to match retro neon theme (cyan glow on hover, panel border)
+- Deployed to Vercel production
+
+### Technical Details
+- New CSS keyframe `example-reveal` in `globals.css`
+- `showExample` state in `ChallengeView.tsx`, resets in `loadChallenge`
+- One-way reveal pattern (button → panel, no toggle back)

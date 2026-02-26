@@ -304,15 +304,16 @@ export default function ChallengeView({ moduleId }: { moduleId: number }) {
                   placeholder="Type the expected output..."
                   spellCheck={false}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowExample((v) => !v)}
-                  className="text-[--color-dim] hover:text-[--color-cyan] text-xs mt-1.5 transition-colors cursor-pointer"
-                >
-                  {showExample ? '▾ Hide example format' : '▸ What format should I use?'}
-                </button>
-                {showExample && (
-                  <div className="mt-1.5 p-2.5 rounded bg-[--color-panel] border border-[#1a1a2e] text-xs text-[--color-dim] font-mono">
+                {!showExample ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowExample(true)}
+                    className="mt-2 px-3 py-1.5 rounded-md text-xs font-bold border border-[--color-dim] text-[--color-dim] hover:border-[--color-cyan] hover:text-[--color-cyan] hover:shadow-[0_0_8px_rgba(0,255,245,0.15)] transition-all cursor-pointer"
+                  >
+                    Give me an example
+                  </button>
+                ) : (
+                  <div className="example-reveal mt-2 p-2.5 rounded-lg bg-[--color-panel] border border-[--color-cyan]/20 text-xs text-[--color-dim] font-mono shadow-[0_0_12px_rgba(0,255,245,0.05)]">
                     <p className="text-[--color-cyan] font-bold mb-1.5 font-sans">MATLAB output examples:</p>
                     <pre className="whitespace-pre leading-relaxed">{`  Number:   42\n  Text:     Hello World\n  Variable: ans =\n                7\n  Vector:   1  2  3  4  5`}</pre>
                     <p className="text-[--color-dim] mt-1.5 font-sans">Tip: spacing doesn&apos;t need to be exact.</p>
